@@ -54,3 +54,29 @@ public class PetSteps {
     }
 }
 
+
+import net.serenitybdd.rest.SerenityRest;
+import io.cucumber.java.en.*;
+
+public class PetSteps {
+    private String petId;
+    private io.restassured.response.Response response;
+
+    @Given("the pet ID is {string}")
+    public void the_pet_id_is(String petId) {
+        this.petId = petId;
+    }
+
+    @When("I send a GET request to /pet/{petId}")
+    public void i_send_a_get_request() {
+        response = SerenityRest.given()
+            .when()
+            .get("https://petstore.swagger.io/v2/pet/" + petId);
+    }
+
+    @Then("I receive a {int} status code")
+    public void i_receive_a_status_code(int statusCode) {
+        response.then().statusCode(statusCode);
+    }
+}
+
