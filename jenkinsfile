@@ -1,0 +1,49 @@
+pipeline {
+    agent {
+        docker {
+            image 'maven:3.8.7-openjdk-17'
+            args '-v $HOME/.m2:/root/.m2'
+        }
+    }
+
+    environment {
+        REPORT_DIR = "target/site/serenity"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build and Run Tests') {
+            steps {
+                sh 'mvn clean verify'
+            }
+        }
+
+        stage('Archive HTML Report') {
+            steps {
+                sh """
+                  mkdir -p build-report
+                  cp -r ${REPORT_DIR}/* build-report/
+                """
+                archiveArtifacts artifacts: 'build-report/**/*', fingerprint: true
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished.'
+        }
+        success {
+            echo 'Tests passed ✅'
+        }
+        failure {
+            echo 'Tests failed ❌'
+        }
+    }
+}
+
