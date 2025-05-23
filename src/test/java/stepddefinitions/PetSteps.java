@@ -1,14 +1,9 @@
 package stepdefinitions;
 
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 import net.serenitybdd.rest.SerenityRest;
-import net.thucydides.core.annotations.Step;
+import io.cucumber.java.en.*;
 import org.junit.Assert;
-
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
-import io.cucumber.java.en.Then;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +12,9 @@ public class PetSteps {
 
     private Response response;
     private Map<String, Object> petPayload;
+    private String petId;
 
+    
     @Given("the pet payload with id {int}, name {string}, and status {string}")
     public void createValidPetPayload(int id, String name, String status) {
         petPayload = new HashMap<>();
@@ -30,7 +27,7 @@ public class PetSteps {
     public void createInvalidPetPayload(int id) {
         petPayload = new HashMap<>();
         petPayload.put("id", id);
-        // name is intentionally missing to trigger negative test
+       
     }
 
     @When("I send a POST request to {string}")
@@ -52,16 +49,8 @@ public class PetSteps {
         String actualName = response.jsonPath().getString("name");
         Assert.assertEquals(expectedName, actualName);
     }
-}
 
-
-import net.serenitybdd.rest.SerenityRest;
-import io.cucumber.java.en.*;
-
-public class PetSteps {
-    private String petId;
-    private io.restassured.response.Response response;
-
+   
     @Given("the pet ID is {string}")
     public void the_pet_id_is(String petId) {
         this.petId = petId;
